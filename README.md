@@ -1,24 +1,16 @@
-# Node template
+# AWS Quick Metric
 
-Template for nodejs based projects.
+Easier to use AWS.CloudWatch putMetric for custom metrics.
 
-- Editorconfig
-- ESlint
-- nyc
+```js
+const AWS = require('aws-sdk');
+const { CustomMetric } = require('aws-quick-metric');
 
-```
-npm install --save-dev nyc mocha lodash sinon chai cross-env coveralls supertest nock editorconfig eslint
-```
+const metric = new CustomMetric(AWS, 'mynamespace');
 
-
-```
-"lint": "eslint *.js src test",
-
-"test": "cross-env NODE_ENV=test NODE_PATH=$NODE_PATH$:./src STACK_NAME=test nyc --all mocha --recursive ./test && npm run lint",
-"test-debug": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test mocha debug --recursive ./test",
-"test-nocov": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test mocha --recursive ./test",
-"test-html": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test nyc --all --reporter=html mocha --recursive ./test && nyc report",
-
-"coverage": "nyc report --reporter=lcov",
-"coveralls-coverage": "nyc report --reporter=text-lcov | coveralls",
+metric.stat({
+  metric: 'mymetric',
+  value: 1.0,
+  unit: 'None'
+}).then(...);
 ```
