@@ -5,3 +5,9 @@ install:
 - npm install
 script:
 - npm run test
+deploy:
+  provider: npm
+  email: "hekark@gmail.com"
+  api_key: "S3unl/JHtNmfNMG91R4/SyS6tGKOOgXquqIklaHqBx8A2ZvE+L/Y8OGsH2qs7LMAodussGzMVko3ljz44nZJpugZmgeGhMwSYu4VTG86Z5XCKr2Rj7k84+aepB630NOjzAUt/zGEV0GAjLmrfIEtWNYitL2inWBgmSkk3Ahmbt/wArf5GZ0lMAph6ZftaK/tIe1gKuDlQqMXQlGPSjGxO4ZY1e8paE5yVEUI1dSj71NZr5bOCludizTP/+nO0XyIOvnSXDXCpYVjVrLQKoeYs3VFfrJYLrZpyMLPVM86QMuiRlNOkATmvPDscJlLO3fvQkrPTmmIY6ujGe3nzWIm95H3NOZ9txklTuHnHs117jM2rggRRRbWAkawGEKN0xN1kROT6i1gXAC+p92vsSbs/hvh9gJoR8tc3UAawRjo4xtzTe1Q4UCFDHoLD8Eijj7vFm4KF2v/KEx7K4XPubaCUO6BLjmm/H35iSNKQcUmglJgZVqiJQdYVJo81UaHXvYFXJhQXfvx65P2JHd1t+nQoZb1BsQziDUXddqG4flkO0g7cjZY6HggGKa9qNAlQh5bvCXl67pZytAuxVXchpO4sfg9uYZikwNuuXWNqEInPJi1rGFnBiF1yPXPnyOM+p9Mdn2bAh38Slr+rVo0y9zRf32a8MGTt6TX90ekMpxHJtk="
+  on:
+    branch: master
