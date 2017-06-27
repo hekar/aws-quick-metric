@@ -1,0 +1,44 @@
+{
+  "name": "aws-quick-metric",
+  "version": "1.0.0",
+  "description": "Simple API for CloudWatch putMetric",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint *.js src test",
+    "test": "cross-env NODE_ENV=test NODE_PATH=$NODE_PATH$:./src STACK_NAME=test nyc --all mocha --recursive ./test && npm run lint",
+    "test-debug": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test mocha debug --recursive ./test",
+    "test-nocov": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test mocha --recursive ./test",
+    "test-html": "cross-env NODE_PATH=$NODE_PATH$:./src STACK_NAME=test nyc --all --reporter=html mocha --recursive ./test && nyc report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hekard2l/aws-quick-metric.git"
+  },
+  "keywords": [
+    "aws",
+    "cloudwatch"
+  ],
+  "author": "Hekar Khani",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hekard2l/aws-quick-metric/issues"
+  },
+  "homepage": "https://github.com/hekard2l/aws-quick-metric#readme",
+  "peerDependencies": {
+    "aws-sdk": "2.x"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
+    "coveralls": "^2.13.1",
+    "cross-env": "^5.0.1",
+    "editorconfig": "^0.13.2",
+    "eslint": "^4.1.1",
+    "lodash": "^4.17.4",
+    "mocha": "^3.4.2",
+    "nock": "^9.0.13",
+    "nyc": "^11.0.3",
+    "sinon": "^2.3.5",
+    "supertest": "^3.0.0"
+  }
+}
