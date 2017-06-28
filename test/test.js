@@ -17,7 +17,7 @@ describe('CustomMetric', function() {
     const aws = {
       CloudWatch: function() {
         const cloudWatch = {
-          putMetrics: _ => _
+          putMetricData: _ => _
         };
         cloudWatchMock = sandbox.mock(cloudWatch);
         return cloudWatch;
@@ -32,10 +32,10 @@ describe('CustomMetric', function() {
   });
 
   describe('#stat(...)', function() {
-    it('should call putMetrics with the correct arguments', function() {
+    it('should call putMetricData with the correct arguments', function() {
       const value = 0.0;
       const unit = 'None';
-      cloudWatchMock.expects('putMetrics')
+      cloudWatchMock.expects('putMetricData')
         .withExactArgs({
           MetricData: [{
             MetricName: metric,
@@ -57,8 +57,8 @@ describe('CustomMetric', function() {
       });
     });
 
-    it('should fail due to putMetrics error', function() {
-      cloudWatchMock.expects('putMetrics')
+    it('should fail due to putMetricData error', function() {
+      cloudWatchMock.expects('putMetricData')
         .returns({
           promise: () => Promise.reject(new Error(''))
         })
@@ -72,7 +72,7 @@ describe('CustomMetric', function() {
     });
 
     it('should throw due to missing value', function() {
-      cloudWatchMock.expects('putMetrics')
+      cloudWatchMock.expects('putMetricData')
         .never();
 
       assert.throws(() => customMetric.stat({
@@ -81,7 +81,7 @@ describe('CustomMetric', function() {
     });
 
     it('should throw due to missing metric', function() {
-      cloudWatchMock.expects('putMetrics')
+      cloudWatchMock.expects('putMetricData')
         .never();
 
       assert.throws(() => customMetric.stat({

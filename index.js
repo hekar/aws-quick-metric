@@ -49,7 +49,7 @@ class CustomMetric {
       Namespace: this.namespace
     };
 
-    return this._cloudWatch.putMetrics(params).promise();
+    return this._cloudWatch.putMetricData(params).promise();
   }
 }
 
