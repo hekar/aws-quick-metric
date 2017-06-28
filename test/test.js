@@ -43,7 +43,7 @@ describe('CustomMetric', function() {
             Value: value,
             Dimensions: []
           }],
-          Namespace: this.namespace
+          Namespace: namespace
         })
         .returns({
           promise: () => Promise.resolve()

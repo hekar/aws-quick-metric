@@ -10,10 +10,11 @@ class CustomMetric {
    */
   constructor(AWS, namespace) {
     assert(AWS, 'AWS required');
-    assert(namespace, 'namespace required');
+    assert(typeof namespace === 'string', 'namespace required and must be string');
     this._cloudWatch = new AWS.CloudWatch({
       apiVersion: '2010-08-01'
     });
+    this._namespace = namespace;
   }
 
   /**
@@ -34,8 +35,8 @@ class CustomMetric {
     unit,
     dimensions
   }) {
-    assert(typeof metric === 'string', 'params.metric required');
-    assert(typeof value === 'number', 'params.value required');
+    assert(typeof metric === 'string', 'params.metric required and must be string');
+    assert(typeof value === 'number', 'params.value required and must be number');
     unit = unit || 'None';
     dimensions = dimensions || [];
 
@@ -46,7 +47,7 @@ class CustomMetric {
         Unit: unit,
         Value: value
       }],
-      Namespace: this.namespace
+      Namespace: this._namespace
     };
 
     return this._cloudWatch.putMetricData(params).promise();
