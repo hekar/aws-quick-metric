@@ -11,10 +11,10 @@ describe('CustomMetric', function() {
   const namespace = 'MyCustomProject';
   const metric = 'MyCustomMetric';
 
-  let sandbox, customMetric, cloudWatchMock;
+  let sandbox, aws, customMetric, cloudWatchMock;
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
-    const aws = {
+    aws = {
       CloudWatch: function() {
         const cloudWatch = {
           putMetricData: _ => _
@@ -87,6 +87,17 @@ describe('CustomMetric', function() {
       assert.throws(() => customMetric.stat({
         value: 0.0
       }));
+    });
+
+    it('should do not nothing when disabled', function() {
+      cloudWatchMock.expects('putMetricData')
+        .never();
+
+      const disabledCustomMetric = new CustomMetric(aws, namespace, {
+        disabled: true
+      });
+
+      return disabledCustomMetric.stat({});
     });
   });
 });
