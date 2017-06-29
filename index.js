@@ -21,6 +21,7 @@ class CustomMetric {
     });
     this._disabled = disabled;
     this._namespace = namespace;
+    this._statQueue = [];
   }
 
   /**
@@ -39,28 +40,67 @@ class CustomMetric {
     metric,
     value,
     unit,
-    dimensions
+    dimensions,
+    immediate
   }) {
+    if (!immediate) {
+      return this._queue({
+        metric,
+        value,
+        unit,
+        dimensions
+      });
+    }
+
     if (this._disabled) {
       return Promise.resolve({});
     }
 
-    assert(typeof metric === 'string', 'params.metric required and must be string');
-    assert(typeof value === 'number', 'params.value required and must be number');
-    unit = unit || 'None';
-    dimensions = dimensions || [];
+    return this._send([{
+      metric,
+      value,
+      unit,
+      dimensions
+    }]);
+  }
 
-    const params = {
-      MetricData: [{
-        MetricName: metric,
-        Dimensions: dimensions,
-        Unit: unit,
-        Value: value
-      }],
-      Namespace: this._namespace
-    };
+  flush() {
+    const promise = this._send(this._statQueue.slice(0));
+    this._statQueue.splice(0);
+    return promise;
+  }
 
-    return this._cloudWatch.putMetricData(params).promise();
+  _queue(params) {
+    this._statQueue.push(params);
+    return Promise.resolve({});
+  }
+
+  _send(items) {
+    return Promise.all(items.map(item => {
+      let {
+        metric,
+        value,
+        unit,
+        dimensions
+      } = item;
+
+      assert(typeof metric === 'string', 'params.metric required and must be string');
+      assert(typeof value === 'number', 'params.value required and must be number');
+      unit = unit || 'None';
+      dimensions = dimensions || [];
+
+      const params = {
+        MetricData: [{
+          MetricName: metric,
+          Dimensions: dimensions,
+          Unit: unit,
+          Value: value
+        }],
+        Namespace: this._namespace
+      };
+
+      return this._cloudWatch.putMetricData(params).promise();
+    }));
   }
 }
 
