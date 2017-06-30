@@ -43,6 +43,16 @@ describe('CustomMetric', function() {
               Unit: unit,
               Value: value,
               Dimensions: []
+            }, {
+              MetricName: metric,
+              Unit: unit,
+              Value: value,
+              Dimensions: []
+            }, {
+              MetricName: metric,
+              Unit: unit,
+              Value: value,
+              Dimensions: []
             }],
             Namespace: namespace
           })
@@ -50,6 +60,18 @@ describe('CustomMetric', function() {
             promise: () => Promise.resolve()
           })
           .once();
+
+        customMetric.stat({
+          metric,
+          value,
+          unit,
+        });
+
+        customMetric.stat({
+          metric,
+          value,
+          unit,
+        });
 
         customMetric.stat({
           metric,

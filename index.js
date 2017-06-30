@@ -76,7 +76,7 @@ class CustomMetric {
   }
 
   _send(items) {
-    return Promise.all(items.map(item => {
+    const metrics = items.map(item => {
       let {
         metric,
         value,
@@ -84,23 +84,29 @@ class CustomMetric {
         dimensions
       } = item;
 
-      assert(typeof metric === 'string', 'params.metric required and must be string');
-      assert(typeof value === 'number', 'params.value required and must be number');
       unit = unit || 'None';
       dimensions = dimensions || [];
 
-      const params = {
-        MetricData: [{
-          MetricName: metric,
-          Dimensions: dimensions,
-          Unit: unit,
-          Value: value
-        }],
-        Namespace: this._namespace
-      };
+      assert(typeof metric === 'string', 'params.metric required and must be string');
+      assert(typeof value === 'number', 'params.value required and must be number');
 
-      return this._cloudWatch.putMetricData(params).promise();
-    }));
+      return {
+        MetricName: metric,
+        Dimensions: dimensions,
+        Unit: unit,
+        Value: value
+      };
+    });
+
+
+    const params = {
+      MetricData: metrics,
+      Namespace: this._namespace
+    };
+
+    return this._cloudWatch
+      .putMetricData(params)
+      .promise();
   }
 }
 
