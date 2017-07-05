@@ -43,6 +43,10 @@ class CustomMetric {
     dimensions,
     immediate
   }) {
+    if (this._disabled) {
+      return Promise.resolve({});
+    }
+
     if (!immediate) {
       return this._queue({
         metric,
@@ -50,10 +54,6 @@ class CustomMetric {
         unit,
         dimensions
       });
-    }
-
-    if (this._disabled) {
-      return Promise.resolve({});
     }
 
     return this._send([{
@@ -97,7 +97,6 @@ class CustomMetric {
         Value: value
       };
     });
-
 
     const params = {
       MetricData: metrics,

@@ -1,6 +1,6 @@
 {
   "name": "aws-quick-metric",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Simple API for CloudWatch putMetric",
   "main": "index.js",
   "scripts": {
