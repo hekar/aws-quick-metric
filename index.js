@@ -47,32 +47,35 @@ class CustomMetric {
       return Promise.resolve({});
     }
 
-    if (!immediate) {
-      return this._queue({
-        metric,
-        value,
-        unit,
-        dimensions
-      });
-    }
-
-    return this._send([{
+    const params = {
       metric,
       value,
       unit,
       dimensions
-    }]);
+    };
+
+    return (immediate) ?
+      this._send([params]) :
+      this._queue(params);
   }
 
   flush() {
-    const promise = this._send(this._statQueue.slice(0));
-    this._statQueue.splice(0);
-    return promise;
+    const copy = this._copyQueue();
+    this._clearQueue();
+    return this._send(copy);
   }
 
   _queue(params) {
     this._statQueue.push(params);
-    return Promise.resolve({});
+    return Promise.resolve();
+  }
+
+  _copyQueue() {
+    return this._statQueue.slice();
+  }
+
+  _clearQueue() {
+    return this._statQueue.splice(0);
   }
 
   _send(items) {

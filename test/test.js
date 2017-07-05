@@ -57,7 +57,8 @@ describe('CustomMetric', function() {
             Namespace: namespace
           })
           .returns({
-            promise: () => Promise.resolve()
+            promise: () =>
+              new Promise(resolve => setTimeout(resolve, 20)) // Fake time delay to check queue logic
           })
           .once();
 
