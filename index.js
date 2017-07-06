@@ -8,19 +8,21 @@ class CustomMetric {
    * @param {string} namespace - Namespace for metrics
    * @param {object} options
    * {
-   *   disabled {string}
+   *   enabled {string} - Enable/disable CustomMetrics. Defaults to true
+   *   flushCounter {number} - Number of metrics written, before being sent to CloudWatch. Defaults to 0
    * }
    * @memberof CustomMetric
    */
   constructor(AWS, namespace, options) {
     assert(AWS, 'AWS required');
     assert(typeof namespace === 'string', 'namespace required and must be string');
-    const { disabled } = options || {};
+    const { enabled, flushCounter } = options || {};
     this._cloudWatch = new AWS.CloudWatch({
       apiVersion: '2010-08-01'
     });
-    this._disabled = disabled;
     this._namespace = namespace;
+    this._enabled = (typeof enabled === 'undefined') ? true : enabled;
+    this._flushCounter = flushCounter || 0;
     this._statQueue = [];
   }
 
@@ -43,7 +45,7 @@ class CustomMetric {
     dimensions,
     immediate
   }) {
-    if (this._disabled) {
+    if (!this._enabled) {
       return Promise.resolve({});
     }
 
@@ -59,10 +61,14 @@ class CustomMetric {
       this._queue(params);
   }
 
-  flush() {
-    const copy = this._copyQueue();
-    this._clearQueue();
-    return this._send(copy);
+  finish() {
+    if (this._statQueue.length > 0 && this._statQueue.length >= this._flushCounter) {
+      const copy = this._copyQueue();
+      this._clearQueue();
+      return this._send(copy);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   _queue(params) {
@@ -90,8 +96,8 @@ class CustomMetric {
       unit = unit || 'None';
       dimensions = dimensions || [];
 
-      assert(typeof metric === 'string', 'params.metric required and must be string');
-      assert(typeof value === 'number', 'params.value required and must be number');
+      assert(typeof metric === 'string', `params.metric required and must be string (${metric})`);
+      assert(typeof value === 'number', `params.value required and must be number (${value})`);
 
       return {
         MetricName: metric,

@@ -32,8 +32,8 @@ describe('CustomMetric', function() {
   });
 
   describe('#stat(...)', function() {
-    describe('flush', function() {
-      it('should call putMetricData with the correct arguments', function() {
+    describe('#finish(...) - Not "immediate" stat flushing', function() {
+      function sendDefaultMetrics() {
         const value = 0.0;
         const unit = 'None';
         cloudWatchMock.expects('putMetricData')
@@ -80,18 +80,45 @@ describe('CustomMetric', function() {
           unit,
         });
 
-        return customMetric.flush();
+        return customMetric.finish();
+      }
+
+      it('should call putMetricData with the correct arguments', function() {
+        return sendDefaultMetrics();
       });
 
-      it('should not putMetric, because queue was not flushed', function() {
+      it('should not putMetric, because queue was not finished', function() {
         cloudWatchMock.expects('putMetricData')
           .never();
 
         const disabledCustomMetric = new CustomMetric(aws, namespace, {
-          disabled: true
+          enabled: false
         });
 
         return disabledCustomMetric.stat({});
+      });
+
+      it('should finish if flushCounter is reached', function() {
+        customMetric = new CustomMetric(aws, namespace, {
+          flushCounter: 3
+        });
+
+        return sendDefaultMetrics();
+      });
+
+      it('should not finish if flushCounter is not reached', function() {
+        customMetric = new CustomMetric(aws, namespace, {
+          flushCounter: 4
+        });
+
+        cloudWatchMock.expects('putMetricData')
+          .never();
+
+        customMetric.stat({});
+        customMetric.stat({});
+        customMetric.stat({});
+
+        return customMetric.finish();
       });
     });
 
@@ -162,7 +189,7 @@ describe('CustomMetric', function() {
           .never();
 
         const disabledCustomMetric = new CustomMetric(aws, namespace, {
-          disabled: true
+          enabled: false
         });
 
         return disabledCustomMetric.stat({
